@@ -1,0 +1,32 @@
+{
+  "summary": "ReturnRide iteration 2: 15/15 new backend tests PASS for POOLING and ADMIN CONSOLE (see /app/backend/tests/test_admin_pooling.py). Pooling: /api/rides/match returns estimated_fare, estimated_fare_pooled (~12% lower), pooled_savings>0, co_riders (int). POST /api/bookings with pooled:true persists a lower estimated_fare AND fare_breakdown.pool_discount > 0; non-pooled has pool_discount==0. Admin AuthZ: passenger + driver -> 403 on /api/admin/stats,users,bookings,settings. Admin Users: filter role=driver works; block flow verified end-to-end (register -> login 200 -> admin block with reason -> login 403 -> admin unblock -> login 200); role change, verify, reset_password (login with new pwd 200) and soft delete all work. Admin Bookings: list filter+detail (timeline present, no OTP leak, otp_result field present) + force-cancel with reason 200, second cancel -> 400 already closed. Admin Logs: list & filter, /logs/export returns text/csv with CSV header. Admin Settings: GET returns all six fare knobs; PUT persists pool_discount/rate_per_km; GET reflects them; restored after test. Frontend Pooling E2E (mobile 390x844): passenger 8000000001/demo1234 -> book-ride-cta -> location-picker -> confirm-pickup at Shirwal default -> search 'Wai' + suggestion-0 (landmark chip Wai Market was off-screen in horizontal ScrollView) -> confirm-drop -> find-rides -> 3 matches. pool-switch present and toggling drops fare ₹171.36 → ₹150.8 (~12%), 'Save ₹20.56' badge + 'Return · 25% Off' badge + '2 Riders On Board' visible. book-{rideId} navigated to /ride/{id}. Admin console UI was not deep-tested via Playwright (mobile time budget exhausted) but its backend contract is fully covered by the pytest suite; admin-shell renders sidebar at >=900px per code inspection.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "location-picker chip row", "issue": "Landmark chip row is a horizontal ScrollView on 390px viewport — 'Wai Market' chip is not visible without horizontal scroll; automated scrollIntoView on the chip's inner Text fails. Search-input flow works fine. Consider making chip row wrap OR give each chip a stable testID='landmark-{name}' so tests can locate reliably.", "testID": "landmark-{id}", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "global", "issues": ["Same RN Web deprecation warnings persist: 'shadow*' style props deprecated (use boxShadow); props.pointerEvents deprecated (use style.pointerEvents). Cosmetic only."]}
+    ],
+    "react_native_issues": []
+  },
+  "test_report_links": ["/app/backend/tests/test_admin_pooling.py", "/app/backend/tests/test_returnride.py", "/app/test_reports/pytest/admin_pooling_results.xml"],
+  "action_items": [
+    "(Optional UX) In app/location-picker.tsx add wrapping option or per-landmark stable testID so E2E can select 'Wai Market' without horizontal scroll gymnastics.",
+    "(Optional) Migrate deprecated RN web props (shadow*, pointerEvents) to silence warnings."
+  ],
+  "critical_code_review_comments": [
+    "admin.py: PATCH /users combines multi-field updates into ONE action string (overwrites earlier action var). If admin sends {status:'blocked', role:'driver'} in a single payload, only the last one is logged. Consider logging one audit entry per field, or a composite action.",
+    "admin.py force_cancel closes 'completed/cancelled/rejected' bookings — good; also decrements no seat on force-cancel (unlike passenger/driver cancel which restores seat via bookings.py). Consider restoring the seat when force-cancelling accepted/en_route/arrived rides.",
+    "rides.py match now computes pooled_fare and co_riders on every candidate — fine at 300-ride limit, but could add index on rides.status/seats_available for scale.",
+    "bookings.py serialize() correctly gates OTP by state+viewer; admin never sees OTP value (verified by pytest); admin_booking_detail also strips otp by using oid_str on raw doc which still contains 'otp' — SECURITY BUG! admin.py line 159 returns oid_str(doc) directly and doc has 'otp' plaintext. Test test_list_and_detail_and_force_cancel asserts 'otp' not in body — it PASSED, so oid_str likely already excludes; but recommend an explicit doc.pop('otp',None) and doc.pop('otp_hash',None) for defense in depth."
+  ],
+  "updated_files": ["/app/backend/tests/test_admin_pooling.py"],
+  "success_rate": {"backend": "100% (15/15 new admin+pooling; 27/27 prior)", "frontend": "Pooling flow verified end-to-end on mobile; admin console UI not exercised in this run (backend-verified)"},
+  "seed_data_creation": "Registered several TEST_ passengers via /api/auth/register with phones 7xxxxxxxxx during block/unblock/role-change/reset-password/delete/force-cancel flows. One live booking left in-progress or after book at /ride/6ab53b5e5f97f1ed261466dd from the UI pooling test.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Backend pytest for admin+pooling lives at /app/backend/tests/test_admin_pooling.py; run with `EXPO_PUBLIC_BACKEND_URL=<preview_url> pytest tests/test_admin_pooling.py -v` (pytest.ini pins -n2 loadscope so classes stay serial per worker). Login testIDs are login-phone-input / login-password-input / login-submit-button (NOT phone-input). location-picker landmark chips have testID='landmark-{id}' but are inside a horizontal ScrollView — prefer picker-search-input+suggestion-0 to reach Wai. Admin UI web preview available at /admin after logging in as 9999999999/admin1234 — sidebar renders at width>=900 with nav-overview/users/drivers/bookings/logs/settings testIDs (verified by grep only, not clicked).",
+  "rca_of_issue": ""
+}

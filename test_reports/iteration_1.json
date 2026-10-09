@@ -1,0 +1,33 @@
+{
+  "summary": "ReturnRide full-stack test: 27/27 backend pytest cases PASS (auth incl. blocked→403, maps reverse/search/route, rides/match seeded results, full booking lifecycle with OTP visibility rules for passenger/driver/admin, 400 on direct in_progress, wrong-OTP with attempts-left message, correct-OTP transition, complete with fare+breakdown, pay cash, rate 5★, cancel requires reason, admin stats/logs, non-admin→403). Frontend E2E on mobile viewport (390x844): passenger login→home book-ride-cta→location-picker (confirm-pickup-button, landmark chips, confirm-drop-button, find-rides-button)→matches (book-{rideId})→ride/[id] shows all four otp-digit-0..3. Driver login→incoming accept-{id}→ride screen btn-en-route, btn-arrived, btn-start opens otp-input; wrong OTP shows 'Wrong OTP, 4 attempts left' toast; correct OTP progresses to btn-complete→trip-summary. Passenger trip-summary shows trip-total, pay-cash/upi/wallet/razorpay, pay-button, star rating + submit-rating; end-to-end cash payment + 5★ rating verified via UI ('Thanks for rating!').",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "location-picker", "issue": "Pickup address label remains 'Move the map to set your point' when Confirm pickup is tapped at the default center (no reverse-geocode fires until user drags the map). This is what gets persisted into booking.pickup.address and shown on driver/ride/summary screens. Not a functional blocker but poor UX.", "testID": "confirm-pickup-button", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "global", "issues": ["React Native web warns: '\"shadow*\" style props are deprecated. Use \"boxShadow\"' and 'props.pointerEvents is deprecated. Use style.pointerEvents' — RN 0.75+ deprecations, cosmetic only"]}
+    ],
+    "react_native_issues": []
+  },
+  "test_report_links": ["/app/backend/tests/test_returnride.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "(Optional UX) In app/location-picker.tsx: trigger reverse-geocode on initial mount for the default center OR block confirm-pickup-button until an address resolves, so booking.pickup.address is never 'Move the map to set your point'.",
+    "(Optional) Migrate deprecated RN props (shadow*, pointerEvents) to their new APIs to silence console warnings."
+  ],
+  "critical_code_review_comments": [
+    "Backend server.py is clean, modular, and correctly excludes ObjectId via oid_str; OTP secret is stored as bcrypt hash (otp_hash) and only the plaintext otp is returned to the passenger via serialize() OTP_VISIBLE_STATES gate — correctly hidden from driver/admin.",
+    "bookings.py VALID_TRANSITIONS + explicit 400 for direct in_progress via /status is well-implemented; complete_ride enforces 500m proximity guard with override_reason escape hatch — good.",
+    "auth.py uses DUMMY_HASH to prevent user-enumeration timing side-channel — solid pattern.",
+    "maps.py has graceful fallback to straight-line route when OSRM fails — good resilience.",
+    "Frontend uses process.env.EXPO_PUBLIC_BACKEND_URL correctly; all interactive elements have testID as required."
+  ],
+  "updated_files": ["/app/backend/tests/test_returnride.py", "/app/backend/tests/__init__.py"],
+  "success_rate": {"backend": "100% (27/27)", "frontend": "100% (all specified testIDs and flows verified end-to-end)"},
+  "seed_data_creation": "Created several TEST_ prefixed passenger accounts via /api/auth/register (phones start with '7...'). One booking was driven through the full lifecycle to completion+paid+rated via UI (booking id 6ab53706b88b4cf6dcbeda99, ride id 6ab531c5f8558c2de59401b1) for the seeded driver Ramesh Patil (9000000001).",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Backend tests use pytest-xdist loadscope (2 workers) — phone numbers must be unique across workers, use random suffix (already implemented via _fresh_phone). Passenger 8000000001 will typically have a completed booking from this run; if a fresh passenger is needed to book, register a new one to avoid the 409 'You already have an active booking' guard. The seeded route Shirwal→Wai always has >=1 active match ride.",
+  "rca_of_issue": ""
+}

@@ -1,0 +1,158 @@
+{
+  "app_name": "ReturnRide",
+  "personality": "4 Tactile / Playful structure with 8 Hand-Drawn / Journal earthy palette",
+  "personality_one_liner": "A grounded, touchable, and deeply human interface that blends 3D tactile elements with a warm, rural Indian color palette to make rural ride-booking feel approachable, reliable, and native.",
+  "color": {
+    "surface": "#FDFBF7",
+    "onSurface": "#2C1E16",
+    "surfaceSecondary": "#F3EBE1",
+    "onSurfaceSecondary": "#2C1E16",
+    "surfaceTertiary": "#E6DACB",
+    "onSurfaceTertiary": "#2C1E16",
+    "surfaceInverse": "#2C1E16",
+    "onSurfaceInverse": "#FDFBF7",
+    "brand": "#C56A3C",
+    "onBrand": "#FFFFFF",
+    "brandPrimary": "#C56A3C",
+    "onBrandPrimary": "#FFFFFF",
+    "brandSecondary": "#D4A017",
+    "onBrandSecondary": "#2C1E16",
+    "brandTertiary": "#9CAF88",
+    "onBrandTertiary": "#203318",
+    "success": "#4A7C59",
+    "onSuccess": "#FFFFFF",
+    "warning": "#D4A017",
+    "onWarning": "#2C1E16",
+    "error": "#B33939",
+    "onError": "#FFFFFF",
+    "info": "#6E645F",
+    "onInfo": "#FFFFFF",
+    "border": "#E6DACB",
+    "borderStrong": "#C56A3C",
+    "divider": "#E6DACB",
+    "muted": "#8A7B73"
+  },
+  "typography": {
+    "displayFontFamily": "Nunito",
+    "textFontFamily": "Plus Jakarta Sans",
+    "scale": {
+      "sm": 12,
+      "base": 14,
+      "lg": 16,
+      "xl": 20,
+      "2xl": 24
+    }
+  },
+  "spacing": {
+    "rule": "Use generous padding for a tactile 3D feel. Interactive elements should feel chunky, touchable, and distinct from the background.",
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24,
+    "2xl": 32,
+    "3xl": 48
+  },
+  "radius_tokens": {
+    "sm": 8,
+    "md": 16,
+    "lg": 24,
+    "pill": 999
+  },
+  "shadow_tier": "2",
+  "navigation": "bottom_tabs",
+  "icon_set": "Phosphor",
+  "glassmorphism": {
+    "enabled": "true",
+    "do's": [
+      "Apply to floating action buttons over the map.",
+      "Apply to top floating search bars or landmark chips containers scrolling over the map.",
+      "Apply to bottom sheet drag handles and headers."
+    ],
+    "dont's": [
+      "Do not blur dense form fields or data-heavy summary cards.",
+      "Avoid on low-end Android devices (use solid surfaceSecondary instead)."
+    ]
+  },
+  "platform_libraries": {
+    "glass": {
+      "ios": "expo-glass-effect",
+      "android": "expo-blur",
+      "low_end_android_fallback": "solid surfaceSecondary"
+    },
+    "image": "expo-image",
+    "blur": "expo-blur",
+    "bottom_sheet": "@gorhom/bottom-sheet",
+    "animation": "react-native-reanimated",
+    "gesture": "react-native-gesture-handler"
+  },
+  "screens": [
+    {
+      "name": "Home / Find Ride",
+      "purpose": "Primary map interface for passengers to set pickup/drop and request a ride.",
+      "states": {
+        "loading": "Map skeleton with pulsing center pin.",
+        "empty": "No rides available - display rural landscape illustration with 'No return rides found nearby' and a 'Notify Me' CTA.",
+        "error": "Location access denied message with a 'Grant Permission' button."
+      },
+      "layout": "Full-screen OpenStreetMap view. Top safe-area contains a glass-morphic floating search bar with a hamburger menu. Map has a draggable center pin for precise location selection. A bottom sheet (using @gorhom/bottom-sheet) displays quick landmark chips (Bus Stand, Temple, Market) in a horizontally scrolling list, and a chunky, 3D primary CTA to 'Confirm Pickup'."
+    },
+    {
+      "name": "Route Preview & Booking",
+      "purpose": "Review route line, distance, ETA, and estimated fare before confirming the booking.",
+      "states": {
+        "loading": "Skeleton text on the bottom sheet while route is fetched.",
+        "empty": "N/A",
+        "error": "Failed to calculate route - 'Retry Route' CTA."
+      },
+      "layout": "Map zoomed to fit the route polyline. Bottom sheet expanded to show chunky, tactile chips for Distance, ETA, and Fare in a 2-column grid or horizontal scroll. A large, raised (shadow 2) sticky CTA at the bottom: 'Book Return Ride'."
+    },
+    {
+      "name": "Active Trip / Tracking",
+      "purpose": "Live tracking of the driver with the prominent 4-digit OTP for starting the ride.",
+      "states": {
+        "loading": "Centering map on driver location...",
+        "empty": "N/A",
+        "error": "Connection lost banner."
+      },
+      "layout": "Live map with moving car marker. Bottom sheet pinned, containing Driver profile (photo + name + rating) and a large, high-contrast OTP section (4 big tactile boxes). Underneath, emergency/support actions and a 'Cancel' button."
+    },
+    {
+      "name": "Trip Summary & Fare Breakdown",
+      "purpose": "Post-ride receipt showing exact fare breakdown and allowing payment and rating.",
+      "states": {
+        "loading": "Processing payment spinner.",
+        "empty": "N/A",
+        "error": "Payment failed - retry with Cash/UPI options."
+      },
+      "layout": "Non-map screen. Earthy surface background. A large, chunky receipt card detailing base fare, return-trip discount, pool discount, and CO2 saved. Prominent total amount. Below the card, 3D payment method chips (Cash, UPI, Wallet) and a 5-star rating widget. Sticky 'Pay & Submit' button at the bottom."
+    }
+  ],
+  "images": {
+    "hero_background": {
+      "url": "https://images.unsplash.com/photo-1604491671692-bb9413a6003b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHwxfHxydXJhbCUyMEluZGlhJTIwdmlsbGFnZSUyMHJvYWQlMjBnb2xkZW4lMjBob3VyJTIwYmFja2dyb3VuZHxlbnwwfHx8fDE3OTAyNTkwNzh8MA&ixlib=rb-4.1.0&q=85",
+      "alt": "Rural Indian village road at golden hour"
+    },
+    "empty_state": {
+      "url": "https://images.pexels.com/photos/12923128/pexels-photo-12923128.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "alt": "Motorcycle parked on a rural road at sunrise"
+    }
+  },
+  "haptics": {
+    "events": {
+      "button_press": "impactLight",
+      "bottom_sheet_snap": "selection",
+      "otp_digit_entered": "impactMedium",
+      "ride_confirmed": "notificationSuccess",
+      "map_pin_dropped": "impactHeavy"
+    }
+  },
+  "instructions_to_main_agent": [
+    "Follow the earthy, rural Indian color palette rigorously. No blues, indigos, or purples anywhere in the UI. Use Terracotta (#C36F4E) for primary actions and Mustard/Sage for secondary accents.",
+    "Ensure all interactive elements (buttons, chips, OTP boxes) have a tactile, 3D feel using generous padding, radius_tokens (sm/md), and shadow_tier 2.",
+    "Implement the Start-Ride OTP as 4 large, separated, chunky digit boxes for high visibility in outdoor rural environments.",
+    "For the Map UI, use a full-screen layout with @gorhom/bottom-sheet for interactive controls. Ensure the map center pin is draggable and updates the bottom sheet address.",
+    "Landmark chips (Bus Stand, Temple, Market) must be prominently displayed as horizontally scrolling tactile pills in the Location Picker bottom sheet.",
+    "Use react-native-reanimated for smooth 3D press transitions (scale down slightly on press) and seamless bottom-sheet snapping."
+  ]
+}
