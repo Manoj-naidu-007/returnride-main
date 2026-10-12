@@ -29,7 +29,10 @@ export default function RideScreen() {
 
   const [otpModal, setOtpModal] = useState(false);
   const [otp, setOtp] = useState("");
+<<<<<<< HEAD
   const otpRef = useRef<TextInput>(null);
+=======
+>>>>>>> e1b84488a082958db067a3711fcb70537a32d0d5
   const [cancelModal, setCancelModal] = useState(false);
   const [reason, setReason] = useState("");
   const simIdx = useRef(0);
@@ -195,11 +198,16 @@ export default function RideScreen() {
       </ScrollView>
 
       {/* OTP modal */}
+<<<<<<< HEAD
       <Modal visible={otpModal} transparent animationType="fade" onShow={() => setTimeout(() => otpRef.current?.focus(), 100)} onRequestClose={() => setOtpModal(false)}>
+=======
+      <Modal visible={otpModal} transparent animationType="fade" onRequestClose={() => setOtpModal(false)}>
+>>>>>>> e1b84488a082958db067a3711fcb70537a32d0d5
         <View style={s.modalBg}>
           <View style={s.modalCard}>
             <Text style={s.modalTitle}>Enter start-ride OTP</Text>
             <Text style={s.muted}>Ask the passenger for their 4-digit code</Text>
+<<<<<<< HEAD
             <View style={[s.otpBoxes, { position: "relative" }]}>
               {[0, 1, 2, 3].map((i) => (
                 <View key={i} style={[s.otpBox, otp.length === i && s.otpBoxActive]}><Text style={s.otpDigit}>{otp[i] ?? ""}</Text></View>
@@ -217,6 +225,22 @@ export default function RideScreen() {
                 style={s.otpOverlayInput}
               />
             </View>
+=======
+            <View style={s.otpBoxes}>
+              {[0, 1, 2, 3].map((i) => (
+                <View key={i} style={[s.otpBox, otp.length === i && s.otpBoxActive]}><Text style={s.otpDigit}>{otp[i] ?? ""}</Text></View>
+              ))}
+            </View>
+            <TextInput
+              testID="otp-input"
+              value={otp}
+              onChangeText={(t) => setOtp(t.replace(/[^0-9]/g, "").slice(0, 4))}
+              keyboardType="number-pad"
+              maxLength={4}
+              autoFocus
+              style={s.hiddenInput}
+            />
+>>>>>>> e1b84488a082958db067a3711fcb70537a32d0d5
             <Button testID="otp-submit" title="Start ride" icon="check" onPress={() => startM.mutate()} loading={startM.isPending} disabled={otp.length !== 4} />
             <Button title="Cancel" variant="ghost" onPress={() => { setOtpModal(false); setOtp(""); }} />
           </View>
@@ -277,6 +301,11 @@ const useStyles = makeStyles((c) => ({
   modalBg: { flex: 1, backgroundColor: "rgba(44,30,22,0.6)", alignItems: "center", justifyContent: "center", padding: spacing.xl },
   modalCard: { width: "100%", maxWidth: 420, backgroundColor: c.surface, borderRadius: radius.lg, padding: spacing.xl, gap: spacing.md, ...shadow.lg },
   modalTitle: { color: c.onSurface, fontSize: 20, fontWeight: "900" },
+<<<<<<< HEAD
   otpOverlayInput: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, opacity: 0.02, color: "transparent", fontSize: 30 } as any,
   hiddenInput: { position: "absolute", opacity: 0, height: 1, width: 1 },
 }));
+=======
+  hiddenInput: { position: "absolute", opacity: 0, height: 1, width: 1 },
+}));
+>>>>>>> e1b84488a082958db067a3711fcb70537a32d0d5

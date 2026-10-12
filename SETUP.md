@@ -48,6 +48,7 @@ If you prefer to create them yourself: `mysql -u returnride -p returnride < data
 ```bash
 cd backend
 python -m venv .venv
+<<<<<<< HEAD
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt (ignore if installed)
 ```
@@ -55,6 +56,10 @@ python -m pip install -r requirements.txt (ignore if installed)
 
 ```bash
 uvicorn server:app --host 0.0.0.0 --port 8001 --reload
+=======
+source .venv/bin/activate            # Windows PowerShell: .venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+>>>>>>> e1b84488a082958db067a3711fcb70537a32d0d5
 ```
 
 ### `backend/.env`
@@ -73,7 +78,15 @@ A working `backend/.env` is included for local development (the matching templat
 | `GOOGLE_MAPS_API_KEY` | optional |
 | `RAZORPAY_KEY_ID` / `RAZORPAY_KEY_SECRET` | optional; cash / UPI / wallet demo payments work without them |
 
+<<<<<<< HEAD
 
+=======
+### Run
+
+```bash
+uvicorn server:app --host 0.0.0.0 --port 8001 --reload
+```
+>>>>>>> e1b84488a082958db067a3711fcb70537a32d0d5
 
 On the first start you should see `ReturnRide startup complete`. Then check:
 
